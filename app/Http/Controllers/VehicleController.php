@@ -34,7 +34,7 @@ class VehicleController extends Controller
 
     public function export($make)
     {
-        $file = 'export_stock.csv';
+        $file = date('Y_m_d_His') . '_' . $make . '_vehicles.csv';
 
         $make = Make::where('name', $make)
             ->with('vehicles')
@@ -57,6 +57,12 @@ class VehicleController extends Controller
             array_push($vehiclesArray, $newArray);
         }
         $export = new VehicleExport($vehiclesArray);
-        return Excel::download($export, $file);
+
+        if (strlen(env('FTP_HOST')) > 0) {  // Use ftp if it is configured
+            Excel::store($export, $file, 'ftp');
+            return redirect('/success');
+        } else {  // else fallback to download
+            return Excel::download($export, $file);
+        }
     }
 }
