@@ -9,6 +9,6 @@ class Base extends Model
 
     public $timestamps = true;
 
-    protected $primaryKey = 'uid';
+    protected $primaryKey = 'id';
 
 }

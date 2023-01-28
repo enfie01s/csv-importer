@@ -21,6 +21,6 @@ class VehicleType extends Base
      */
     public function vehicles()
     {
-        return $this->hasMany(Vehicle::class, 'type_id', 'uid');
+        return $this->hasMany(Vehicle::class, 'type_id', 'id');
     }
 }

@@ -2,16 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Imports\VehicleImport;
+use App\Classes\VehicleImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
+use App\Models\VehicleImportReport;
 
 class VehicleController extends Controller
 {
     public function import()
     {
-        Excel::import(new VehicleImport, 'example_stock.csv');
+        $file = './example_stock.csv';
+        $import = new VehicleImport;
+        Excel::import($import, './example_stock.csv');
 
-        return redirect('/')->with('success', 'All good!');
+        $report = VehicleImportReport::create([
+            'filename' => $file,
+            'successful' => $import->data['successful'],
+            'failed_reg' => $import->data['failed_reg'],
+            'failed_price' => $import->data['failed_price'],
+            'failed_images' => $import->data['failed_images'],
+        ]);
+
+        # Send mail here
+
+        return redirect('/success');
     }
 }

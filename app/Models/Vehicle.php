@@ -12,7 +12,6 @@ class Vehicle extends Base
      */
     protected $fillable = [
         'reg',
-        'type',
         'range',
         'model',
         'derivative',
@@ -21,6 +20,8 @@ class Vehicle extends Base
         'mileage',
         'date_on_forecourt',
         'images',
+        'available',
+        'type_id',
     ];
 
     /**
@@ -39,7 +40,7 @@ class Vehicle extends Base
      */
     public function make()
     {
-        return $this->belongsTo(Make::class, 'make_id', 'uid');
+        return $this->belongsTo(Make::class, 'make_id', 'id');
     }
 
     /**

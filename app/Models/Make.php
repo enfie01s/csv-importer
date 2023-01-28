@@ -23,6 +23,6 @@ class Make extends Base
      */
     public function vehicles()
     {
-        return $this->hasMany(Vehicle::class, 'make_id', 'uid');
+        return $this->hasMany(Vehicle::class, 'make_id', 'id');
     }
 }

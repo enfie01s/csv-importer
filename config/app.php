@@ -211,6 +211,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'VehicleImport' => Illuminate\Support\Facades\VehicleImport::class,
     ])->toArray(),
 
 ];
