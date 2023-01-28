@@ -21,3 +21,4 @@ Route::get('/success', function () {
     return view('success');
 });
 Route::get('/import', 'App\Http\Controllers\VehicleController@import');
+Route::get('/export/{make}', 'App\Http\Controllers\VehicleController@export');

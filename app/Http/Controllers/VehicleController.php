@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Classes\VehicleImport;
+use App\Classes\VehicleExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
 use App\Models\VehicleImportReport;
+use App\Models\Make;
 use App\Mail\VehicleImported;
 use Illuminate\Support\Facades\Mail;
 
@@ -15,7 +17,7 @@ class VehicleController extends Controller
     {
         $file = './example_stock.csv';
         $import = new VehicleImport;
-        Excel::import($import, './example_stock.csv');
+        Excel::import($import, $file);
 
         $report = VehicleImportReport::create([
             'filename' => $file,
@@ -28,5 +30,33 @@ class VehicleController extends Controller
         # Send mail here
         Mail::to(env('APP_ADMINISTRATOR'))->send(new VehicleImported($report));
         return redirect('/success');
+    }
+
+    public function export($make)
+    {
+        $file = 'export_stock.csv';
+
+        $make = Make::where('name', $make)
+            ->with('vehicles')
+            ->first();
+
+        $vehiclesArray = [];
+        foreach ($make->vehicles as $row) {
+            $title = implode(' ', [$make->name, $row['model'], $row['derivative']]);
+            $vatPerc = 1 + (int)env('VAT_PERCENT') / 100;
+            $exvat = $row['price_inc_vat'] / $vatPerc;
+            $vat = $row['price_inc_vat'] - $exvat;
+            $images = explode(',', $row['images']);
+            $newArray = [
+                'registration' => $row['reg'],
+                'title' => $title,
+                'exvat' => round($exvat, 2),
+                'vat' => round($vat, 2),
+                'image' => $images[0],
+            ];
+            array_push($vehiclesArray, $newArray);
+        }
+        $export = new VehicleExport($vehiclesArray);
+        return Excel::download($export, $file);
     }
 }
